@@ -1,14 +1,12 @@
 package com.romainpiel.catsanddogs
 
-import com.google.gson.Gson
 import spark.Spark.*
 import java.io.IOException
 import java.lang.System.getenv
-
+import java.time.OffsetDateTime
 
 fun main(args: Array<String>) {
     val scheduleRepository = ScheduleRepository()
-    val gson = Gson()
 
     getenv("PORT")?.let { port(it.toInt()) }
 
@@ -16,10 +14,10 @@ fun main(args: Array<String>) {
         internalServerError("Exception for request: ${request.uri()}\n$exception")
     }
 
-    get("/") { req, res -> "Cats And Dogs - Kotlin - Server Says Hello" }
+    get("/") { req, res -> "Cats And Dogs - Kotlin - BFF Says Hello" }
     get("/schedule.json") { req, res ->
-        scheduleRepository.schedule()
-                .toJson(gson)
-                .blockingGet()
+        val fromStr: String? = req.queryParams("from")
+        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+        scheduleRepository.schedule(from).blockingGet()
     }
 }
