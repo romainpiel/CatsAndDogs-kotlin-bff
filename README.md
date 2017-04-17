@@ -1,6 +1,6 @@
 # CatsAndDogs-kotlin-bff
 A bare bones Kotlin Web Service using Spark framework for the Cats And Dogs Talk.
-This is the backend for frontend layer sitting between the Android app and the backend.
+This is the backend for frontend layer sitting between the [Android app](https://github.com/RomainPiel/CatsAndDogs-Android) and the [backend](https://github.com/RomainPiel/CatsAndDogs-kotlin-server).
 
 ## How to set up the dev environment
 
