@@ -1,14 +1,14 @@
 package com.romainpiel.catsanddogs
 
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import com.google.gson.Gson
 import spark.Spark.*
 import java.io.IOException
 import java.lang.System.getenv
 
 
 fun main(args: Array<String>) {
-    val client = OkHttpClient()
+    val scheduleRepository = ScheduleRepository()
+    val gson = Gson()
 
     getenv("PORT")?.let { port(it.toInt()) }
 
@@ -18,11 +18,8 @@ fun main(args: Array<String>) {
 
     get("/") { req, res -> "Cats And Dogs - Kotlin - Server Says Hello" }
     get("/schedule.json") { req, res ->
-        val request = Request.Builder()
-                .url("https://catsanddogs-kotlin-server.herokuapp.com/schedule.json")
-                .build()
-
-        val response = client.newCall(request).execute()
-        response.body().string()
+        scheduleRepository.schedule()
+                .toJson(gson)
+                .blockingGet()
     }
 }

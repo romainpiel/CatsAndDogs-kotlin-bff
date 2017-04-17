@@ -17,16 +17,18 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlinx.support'
-    }
+    maven { url 'http://dl.bintray.com/kotlin/kotlinx.support' }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile 'com.sparkjava:spark-core:2.5.5'
     compile 'org.slf4j:slf4j-simple:1.7.13'
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0-SNAPSHOT'
+    compile "io.reactivex.rxjava2:rxjava:2.0.5"
 }
 
 
