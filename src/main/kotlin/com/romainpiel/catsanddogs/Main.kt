@@ -17,7 +17,8 @@ fun main(args: Array<String>) {
     get("/") { req, res -> "Cats And Dogs - Kotlin - BFF Says Hello" }
     get("/schedule.json") { req, res ->
         val fromStr: String? = req.queryParams("from")
-        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+        val from = fromStr?.map { OffsetDateTime.parse(it) }
+
         scheduleRepository.schedule(from).blockingGet()
     }
 }
