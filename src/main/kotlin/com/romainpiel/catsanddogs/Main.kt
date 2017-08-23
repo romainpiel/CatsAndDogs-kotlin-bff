@@ -1,24 +1,31 @@
 package com.romainpiel.catsanddogs
 
-import spark.Spark.*
-import java.io.IOException
+import org.jetbrains.ktor.host.embeddedServer
+import org.jetbrains.ktor.http.ContentType
+import org.jetbrains.ktor.netty.Netty
+import org.jetbrains.ktor.response.respondText
+import org.jetbrains.ktor.routing.get
+import org.jetbrains.ktor.routing.routing
 import java.lang.System.getenv
 import java.time.OffsetDateTime
-
 fun main(args: Array<String>) {
     val scheduleRepository = ScheduleRepository()
 
-    getenv("PORT")?.let { port(it.toInt()) }
+    val port = getenv("PORT")?.toInt() ?: 8080
 
-    exception(IOException::class.java) { exception, request, response ->
-        internalServerError("Exception for request: ${request.uri()}\n$exception")
-    }
+    embeddedServer(Netty, port) {
+        routing {
+            // todo: update intelli-j and use _
+            get("/") { req, response ->
+                call.respondText("Cats And Dogs - Kotlin - BFF Says Hello", ContentType.Text.Html)
+            }
 
-    get("/") { req, res -> "Cats And Dogs - Kotlin - BFF Says Hello" }
-    get("/schedule.json") { req, res ->
-        val fromStr: String? = req.queryParams("from")
-        val from = fromStr?.map { OffsetDateTime.parse(it) }
+            get("/schedule.json") { req, res ->
+                val fromStr: String? = call.request.queryParameters["from"]
+                val from = fromStr?.let { OffsetDateTime.parse(it) }
 
-        scheduleRepository.schedule(from).blockingGet()
-    }
+                scheduleRepository.schedule(from).blockingGet()
+            }
+        }
+    }.start(wait = true)
 }
