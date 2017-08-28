@@ -18,8 +18,8 @@ apply plugin: 'application'
 
 repositories {
     mavenCentral()
-    maven { url 'http://dl.bintray.com/kotlin/ktor' }
-    maven { url 'http://dl.bintray.com/kotlin/kotlinx.support' }
+    maven { url "https://dl.bintray.com/kotlin/kotlinx" }
+    maven { url "https://dl.bintray.com/kotlin/ktor" }
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
 }
 
@@ -45,3 +45,9 @@ task stage(dependsOn: ['build', 'clean', 'copyToLib'])
 build.mustRunAfter clean
 
 mainClassName = "com.romainpiel.catsanddogs.MainKt"
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}

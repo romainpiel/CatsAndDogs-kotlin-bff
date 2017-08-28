@@ -8,6 +8,7 @@ import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.routing
 import java.lang.System.getenv
 import java.time.OffsetDateTime
+
 fun main(args: Array<String>) {
     val scheduleRepository = ScheduleRepository()
 
@@ -15,16 +16,16 @@ fun main(args: Array<String>) {
 
     embeddedServer(Netty, port) {
         routing {
-            // todo: update intelli-j and use _
-            get("/") { req, response ->
+            get("/") {
                 call.respondText("Cats And Dogs - Kotlin - BFF Says Hello", ContentType.Text.Html)
             }
 
-            get("/schedule.json") { req, res ->
+            get("/schedule.json") {
                 val fromStr: String? = call.request.queryParameters["from"]
                 val from = fromStr?.let { OffsetDateTime.parse(it) }
 
-                scheduleRepository.schedule(from).blockingGet()
+                val json = scheduleRepository.schedule(from).blockingGet()
+                call.respondText(json, ContentType.Application.Json)
             }
         }
     }.start(wait = true)

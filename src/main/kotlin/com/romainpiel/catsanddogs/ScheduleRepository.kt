@@ -19,7 +19,7 @@ class ScheduleRepository {
 
     init {
         gson = GsonBuilder()
-                .registerTypeAdapter(OffsetDateTime::class.java, JsonDeserializer { json, type, context ->
+                .registerTypeAdapter(OffsetDateTime::class.java, JsonDeserializer { json, _, _ ->
                     OffsetDateTime.parse(json.asString)
                 })
                 .create()
