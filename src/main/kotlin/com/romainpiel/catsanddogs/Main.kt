@@ -8,6 +8,7 @@ import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.routing
 import java.lang.System.getenv
 import java.time.OffsetDateTime
+import java.util.*
 
 fun main(args: Array<String>) {
     val scheduleRepository = ScheduleRepository()
@@ -29,4 +30,31 @@ fun main(args: Array<String>) {
             }
         }
     }.start(wait = true)
+
+//    // todo: pass in locale or default
+//
+//    // deprecated
+//    get("/schedule.json") { req, res ->
+//        val fromStr: String? = req.queryParams("from")
+//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val locale = Locale.forLanguageTag("pl")
+//
+//        scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
+//    }
+//
+//    get("/mce4/schedule.json") { req, res ->
+//        val fromStr: String? = req.queryParams("from")
+//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val locale = Locale.forLanguageTag("pl")
+//
+//        scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
+//    }
+//
+//    get("/kotlinconf/schedule.json") { req, res ->
+//        val fromStr: String? = req.queryParams("from")
+//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val locale = Locale.forLanguageTag("us")
+//
+//        scheduleRepository.schedule(from, locale, Conference.KotlinConf).blockingGet()
+//    }
 }
