@@ -18,6 +18,7 @@ fun main(args: Array<String>) {
     get("/") { req, res -> "Cats And Dogs - Kotlin - BFF Says Hello" }
 
     // todo: pass in locale or default
+    // todo: get rid of duplicated code
 
     // deprecated
     get("/schedule.json") { req, res ->
