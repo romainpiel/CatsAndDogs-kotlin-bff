@@ -31,12 +31,17 @@ fun main(args: Array<String>) {
         }
     }.start(wait = true)
 
+//    // todo: get rid of duplicated code
 //    // todo: pass in locale or default
 //
-//    // deprecated
 //    get("/schedule.json") { req, res ->
+//        // deprecated
 //        val fromStr: String? = req.queryParams("from")
-//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val from = if (fromStr != null) {
+//            OffsetDateTime.parse(fromStr)
+//        } else {
+//            null
+//        }
 //        val locale = Locale.forLanguageTag("pl")
 //
 //        scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
@@ -44,7 +49,11 @@ fun main(args: Array<String>) {
 //
 //    get("/mce4/schedule.json") { req, res ->
 //        val fromStr: String? = req.queryParams("from")
-//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val from = if (fromStr != null) {
+//            OffsetDateTime.parse(fromStr)
+//        } else {
+//            null
+//        }
 //        val locale = Locale.forLanguageTag("pl")
 //
 //        scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
@@ -52,7 +61,11 @@ fun main(args: Array<String>) {
 //
 //    get("/kotlinconf/schedule.json") { req, res ->
 //        val fromStr: String? = req.queryParams("from")
-//        val from = if (fromStr != null) { OffsetDateTime.parse(fromStr) } else { null }
+//        val from = if (fromStr != null) {
+//            OffsetDateTime.parse(fromStr)
+//        } else {
+//            null
+//        }
 //        val locale = Locale.forLanguageTag("us")
 //
 //        scheduleRepository.schedule(from, locale, Conference.KotlinConf).blockingGet()
