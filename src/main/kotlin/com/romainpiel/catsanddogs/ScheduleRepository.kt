@@ -12,10 +12,14 @@ import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
 
+enum class Conference {
+    MCE4,
+    KotlinConf
+}
+
 class ScheduleRepository {
     private val gson: Gson
     private val service: ScheduleService
-    private val locale = Locale.forLanguageTag("pl")
 
     init {
         gson = GsonBuilder()
@@ -25,7 +29,7 @@ class ScheduleRepository {
                 .create()
 
         val retrofit = Retrofit.Builder()
-                .baseUrl("https://catsanddogs-kotlin-server.herokuapp.com")
+                .baseUrl("https://catsanddogs-swift-server.herokuapp.com/")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
@@ -33,12 +37,34 @@ class ScheduleRepository {
         service = retrofit.create(ScheduleService::class.java)
     }
 
-    fun schedule(from: OffsetDateTime?): Single<String> {
+    fun schedule(from: OffsetDateTime?, locale: Locale, conference: Conference): Single<String> {
         val safeFrom = from ?: OffsetDateTime.MIN
-        return service.getConference()
+
+        when (conference) {
+                Conference.MCE4 -> return scheduleMCE4(safeFrom, locale)
+                Conference.KotlinConf -> return scheduleKotlinConf(safeFrom, locale)
+        }
+    }
+
+    private fun scheduleMCE4(from: OffsetDateTime, locale: Locale): Single<String> {
+        return service.getMCE4Schedule()
                 .map { it.schedule }
                 .flatMapIterable { it }
-                .filter { !safeFrom.isAfter(it.datestamp) }
+                .filter { !from.isAfter(it.datestamp) }
+                .map {
+                    val date = it.datestamp.format(ofPattern("EEEE, d MMMM y", locale)).capitalize()
+                    val time = it.datestamp.format(ofPattern("HH:mm", locale))
+                    Card(it.title, it.speaker.joinToString(), date, time)
+                }
+                .toList()
+                .toJson(gson)
+    }
+
+    private fun scheduleKotlinConf(from: OffsetDateTime, locale: Locale): Single<String> {
+        return service.getKotlinConfSchedule()
+                .map { it.schedule }
+                .flatMapIterable { it }
+                .filter { !from.isAfter(it.datestamp) }
                 .map {
                     val date = it.datestamp.format(ofPattern("EEEE, d MMMM y", locale)).capitalize()
                     val time = it.datestamp.format(ofPattern("HH:mm", locale))

@@ -5,6 +5,9 @@ import io.reactivex.Observable
 import retrofit2.http.GET
 
 interface ScheduleService {
-    @GET("/schedule.json")
-    fun getConference(): Observable<ApiConference>
+    @GET("/mce4/schedule")
+    fun getMCE4Schedule(): Observable<ApiConference>
+
+    @GET("/kotlinconf/schedule")
+    fun getKotlinConfSchedule(): Observable<ApiConference>
 }
