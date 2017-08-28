@@ -24,8 +24,9 @@ fun main(args: Array<String>) {
             get("/schedule.json") {
                 val fromStr: String? = call.request.queryParameters["from"]
                 val from = fromStr?.let { OffsetDateTime.parse(it) }
+                val locale = Locale.forLanguageTag("pl")
 
-                val json = scheduleRepository.schedule(from).blockingGet()
+                val json = scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
                 call.respondText(json, ContentType.Application.Json)
             }
         }

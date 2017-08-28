@@ -54,7 +54,7 @@ class ScheduleRepository {
                 .map {
                     val date = it.datestamp.format(ofPattern("EEEE, d MMMM y", locale)).capitalize()
                     val time = it.datestamp.format(ofPattern("HH:mm", locale))
-                    Card(it.title, it.speaker.joinToString(), date, time)
+                    Item(it.title, it.speaker.joinToString(), date, time)
                 }
                 .toList()
                 .toJson(gson)
