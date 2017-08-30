@@ -15,6 +15,10 @@ import java.util.*
 enum class Conference {
     MCE4,
     KotlinConf
+
+    fun init(rawValue: String) {
+        if rawValue.equals(Conference.MCE4.toString()) 
+    }
 }
 
 class ScheduleRepository {
