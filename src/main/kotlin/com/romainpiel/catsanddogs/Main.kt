@@ -3,6 +3,7 @@ package com.romainpiel.catsanddogs
 import org.jetbrains.ktor.host.embeddedServer
 import org.jetbrains.ktor.http.ContentType
 import org.jetbrains.ktor.netty.Netty
+import org.jetbrains.ktor.response.header
 import org.jetbrains.ktor.response.respondText
 import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.routing
@@ -25,34 +26,34 @@ fun main(args: Array<String>) {
 
             // deprecated
             get("/schedule.json") {
-                val parameters = parameters(call.request.queryParameters)
+                val from = offsetDateTime(call.request.queryParameters)
                 val conference = Conference.MCE4
+                val acceptLanguage = "pl-PL"
+                val locale = Locale.forLanguageTag(acceptLanguage)
 
-                val json = scheduleRepository.schedule(parameters.from, parameters.locale, conference).blockingGet()
+                val json = scheduleRepository.schedule(from, locale, conference).blockingGet()
                 call.respondText(json, ContentType.Application.Json)
             }
 
             get("/{conference}/schedule.json") {
-                val parameters = parameters(call.request.queryParameters)
+                val from = offsetDateTime(call.request.queryParameters)
                 val conference: Conference = Conference.instance(call.parameters["conference"]) ?: Conference.MCE4
+                val acceptLanguage: String = call.request.headers["Accept-Language"] ?: "pl-PL"
+                val locale = Locale.forLanguageTag(acceptLanguage)
 
-                val json = scheduleRepository.schedule(parameters.from, parameters.locale, conference).blockingGet()
+                val json = scheduleRepository.schedule(from, locale, conference).blockingGet()
+
+                call.response.header("A", locale.toString())
                 call.respondText(json, ContentType.Application.Json)
             }
         }
     }.start(wait = true)
 }
 
-data class BFFParameters(val from: OffsetDateTime,
-                         val locale: Locale)
-
-fun parameters(queryParameters: ValuesMap): BFFParameters {
+fun offsetDateTime(queryParameters: ValuesMap): OffsetDateTime {
     val fromStr: String? = queryParameters["from"]
     val from = fromStr?.let { OffsetDateTime.parse(it) }
     val safeFrom = from ?: OffsetDateTime.MIN
 
-    // TODO: Locale
-    val locale = Locale.forLanguageTag("pl")
-
-    return BFFParameters(safeFrom, locale)
+    return safeFrom
 }

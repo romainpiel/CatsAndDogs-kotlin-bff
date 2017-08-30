@@ -43,7 +43,7 @@ class ScheduleRepository {
     }
 
     fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
-        return service.getSchedule("en-UK", conference.rawValue)
+        return service.getSchedule(locale.getLanguage(), conference.rawValue)
                 .map { it.schedule }
                 .flatMapIterable { it }
                 .filter { !from.isAfter(it.datestamp) }
