@@ -6,6 +6,8 @@ import org.jetbrains.ktor.netty.Netty
 import org.jetbrains.ktor.response.respondText
 import org.jetbrains.ktor.routing.get
 import org.jetbrains.ktor.routing.routing
+import org.jetbrains.ktor.util.*
+
 import java.lang.System.getenv
 import java.time.OffsetDateTime
 import java.util.*
@@ -21,44 +23,36 @@ fun main(args: Array<String>) {
                 call.respondText("Cats And Dogs - Kotlin - BFF Says Hello", ContentType.Text.Html)
             }
 
+            // deprecated
             get("/schedule.json") {
-                val fromStr: String? = call.request.queryParameters["from"]
-                val from = fromStr?.let { OffsetDateTime.parse(it) }
-                val locale = Locale.forLanguageTag("pl")
-                val conferenceValue: String? = call.request.queryParameters["conference"] ?? "mce4"
+                val parameters = parameters(call.request.queryParameters)
+                val conference = Conference.MCE4
 
-                val json = scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
+                val json = scheduleRepository.schedule(parameters.from, parameters.locale, conference).blockingGet()
                 call.respondText(json, ContentType.Application.Json)
             }
 
-            get("/mce4/schedule.json") {
-                val fromStr: String? = call.request.queryParameters["from"]
-                val from = fromStr?.let { OffsetDateTime.parse(it) }
-                val locale = Locale.forLanguageTag("pl")
+            get("/{conference}/schedule.json") {
+                val parameters = parameters(call.request.queryParameters)
+                val conference: Conference = Conference.instance(call.parameters["conference"]) ?: Conference.MCE4
 
-                val json = scheduleRepository.schedule(from, locale, Conference.MCE4).blockingGet()
+                val json = scheduleRepository.schedule(parameters.from, parameters.locale, conference).blockingGet()
                 call.respondText(json, ContentType.Application.Json)
             }
-
-            get("/kotlinconf/schedule.json") {
-                val fromStr: String? = call.request.queryParameters["from"]
-                val from = fromStr?.let { OffsetDateTime.parse(it) }
-                val locale = Locale.forLanguageTag("us")
-
-                val json = scheduleRepository.schedule(from, locale, Conference.KotlinConf).blockingGet()
-                call.respondText(json, ContentType.Application.Json)
-            }
-
         }
     }.start(wait = true)
 }
 
-private fun parameters(call): (from: String, locale: String, conference: Conference) {
-    val fromStr: String? = call.request.queryParameters["from"]
-    val from = fromStr?.let { OffsetDateTime.parse(it) }
-    val locale = Locale.forLanguageTag("pl")
-    val conferenceValue: String? = call.request.queryParameters["conference"] ?? "mce4"
-    val conference = Conference(rawValue: conferenceValue)
+data class BFFParameters(val from: OffsetDateTime,
+                         val locale: Locale)
 
-    return (from, locale, conference)
+fun parameters(queryParameters: ValuesMap): BFFParameters {
+    val fromStr: String? = queryParameters["from"]
+    val from = fromStr?.let { OffsetDateTime.parse(it) }
+    val safeFrom = from ?: OffsetDateTime.MIN
+
+    // TODO: Locale
+    val locale = Locale.forLanguageTag("pl")
+
+    return BFFParameters(safeFrom, locale)
 }
