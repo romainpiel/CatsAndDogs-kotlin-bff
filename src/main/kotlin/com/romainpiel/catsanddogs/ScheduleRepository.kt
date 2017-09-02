@@ -14,19 +14,7 @@ enum class Conference(val rawValue: String) {
     KotlinConf("kotlinconf");
 
     companion object {
-        fun instance(rawValue: String?): Conference? {
-            if (rawValue == null) { return null }
-
-            if (rawValue.equals(MCE4.rawValue)) {
-                return Conference.MCE4
-            }
-
-            if (rawValue.equals(KotlinConf.rawValue)) {
-                return Conference.KotlinConf
-            }
-
-            return null
-        }
+        fun instance(rawValue: String?) = Conference.values().firstOrNull { it.rawValue == rawValue }
     }
 }
 
@@ -43,7 +31,7 @@ class ScheduleRepository {
     }
 
     fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
-        return service.getSchedule(locale.getLanguage(), conference.rawValue)
+        return service.getSchedule(locale.language, conference.rawValue)
                 .map { it.schedule }
                 .flatMapIterable { it }
                 .filter { !from.isAfter(it.datestamp) }
