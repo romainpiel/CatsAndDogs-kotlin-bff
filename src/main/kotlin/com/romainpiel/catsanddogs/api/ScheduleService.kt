@@ -1,17 +1,17 @@
 package com.romainpiel.catsanddogs.api
 
+import com.google.gson.Gson
 import com.romainpiel.catsanddogs.api.model.ApiConference
 import io.reactivex.Observable
-import retrofit2.http.*
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Path
 
 // See: https://square.github.io/retrofit/ for details of how this works uisng Retrofit
 interface ScheduleService {
-    // TODO: @Header("Accept-Language") does not seem to be working
     @GET("/{conference}/schedule")
     fun getSchedule(@Header("Accept-Language") acceptLanguage: String,
                     @Path("conference") conference: String): Observable<ApiConference>
