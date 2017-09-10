@@ -48,21 +48,7 @@ class ScheduleRepository {
         service = ScheduleService.create(gson)
     }
 
-    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
-        return service.getSchedule(locale.language, conference.rawValue)
-                .map { it.schedule }
-                .flatMapIterable { it }
-                .filter { !from.isAfter(it.datestamp) }
-                .map {
-                    val date = it.datestamp.format(ofPattern("EEEE, d MMMM y", locale)).capitalize()
-                    val time = it.datestamp.format(ofPattern("HH:mm", locale))
-                    Item(it.title, it.speaker.joinToString(), date, time)
-                }
-                .toList()
-                .toJson(gson)
-    }
-
-    fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
+    private fun scheduleList(from: OffsetDateTime, locale: Locale, conference: Conference): Single<List<Item>> {
         return service.getSchedule(locale.getLanguage(), conference.rawValue)
                 .map { it.schedule }
                 .flatMapIterable { it }
@@ -73,6 +59,13 @@ class ScheduleRepository {
                     Item(it.title, it.speaker.joinToString(), date, time)
                 }
                 .toList()
-                .toHtml()
+    }
+
+    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
+        return this.scheduleList(from, locale, conference).toJson(gson)
+    }
+
+    fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
+        return this.scheduleList(from, locale, conference).toHtml()
     }
 }
