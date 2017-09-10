@@ -1,12 +1,13 @@
 package com.romainpiel.catsanddogs
 
-import org.jetbrains.ktor.application.*
+import com.romainpiel.catsanddogs.repository.*
+import com.romainpiel.catsanddogs.model.*
+
 import org.jetbrains.ktor.host.*
 import org.jetbrains.ktor.http.*
 import org.jetbrains.ktor.netty.*
 import org.jetbrains.ktor.response.*
 import org.jetbrains.ktor.routing.*
-import org.jetbrains.ktor.util.*
 import java.lang.System.getenv
 import java.util.*
 
@@ -22,6 +23,7 @@ fun main(args: Array<String>) {
             }
 
             // deprecated
+            // todo: dry
             get("/schedule.json") {
                 val conference = Conference.MCE4
                 val from = call.request.queryParameters.getDate("from")
@@ -43,7 +45,7 @@ fun main(args: Array<String>) {
             }
 
             get("/{conference}/schedule.html") {
-                val from = offsetDateTime(call.request.queryParameters)
+                val from = call.request.queryParameters.getDate("from")
                 val conference: Conference = Conference.instance(call.parameters["conference"]) ?: Conference.MCE4
                 val acceptLanguage: String = call.request.headers["Accept-Language"] ?: "pl-PL"
                 val locale = Locale.forLanguageTag(acceptLanguage)
