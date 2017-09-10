@@ -4,9 +4,10 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import com.romainpiel.catsanddogs.api.ScheduleService
+
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toObservable
-import io.reactivex.rxkotlin.toSingle
+
+import org.jetbrains.ktor.util.*
 
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ofPattern
@@ -68,4 +69,12 @@ class ScheduleRepository {
     fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
         return this.scheduleList(from, locale, conference).toHtml()
     }
+}
+
+fun offsetDateTime(queryParameters: ValuesMap): OffsetDateTime {
+    val fromStr: String? = queryParameters["from"]
+    val from = fromStr?.let { OffsetDateTime.parse(it) }
+    val safeFrom = from ?: OffsetDateTime.MIN
+
+    return safeFrom
 }

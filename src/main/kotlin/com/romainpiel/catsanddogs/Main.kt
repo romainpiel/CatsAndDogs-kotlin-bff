@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
             // deprecated
             get("/schedule.json") {
-                val conference = MCE4
+                val conference = Conference.MCE4
                 val from = call.request.queryParameters.getDate("from")
                 val acceptLanguage = call.request.headers["Accept-Language"] ?: "pl-PL"
                 val locale = Locale.forLanguageTag(acceptLanguage)
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
             }
 
             get("/{conference}/schedule.json") {
-                val conference = Conference.instance(call.parameters["conference"]) ?: MCE4
+                val conference = Conference.instance(call.parameters["conference"]) ?: Conference.MCE4
                 val from = call.request.queryParameters.getDate("from")
                 val acceptLanguage = call.request.headers["Accept-Language"] ?: "pl-PL"
                 val locale = Locale.forLanguageTag(acceptLanguage)
