@@ -1,22 +1,17 @@
-package com.romainpiel.catsanddogs
+package com.romainpiel.catsanddogs.repository
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
+
 import com.romainpiel.catsanddogs.api.ScheduleService
+import com.romainpiel.catsanddogs.model.*
+
 import io.reactivex.Single
+
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter.ofPattern
 import java.util.*
-
-enum class Conference(val rawValue: String) {
-    MCE4("mce4"),
-    KotlinConf("kotlinconf");
-
-    companion object {
-        fun instance(rawValue: String?) = Conference.values().firstOrNull { it.rawValue == rawValue }
-    }
-}
 
 class ScheduleRepository {
     private val gson: Gson
@@ -30,7 +25,7 @@ class ScheduleRepository {
         service = ScheduleService.create(gson)
     }
 
-    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> {
+    private fun scheduleList(from: OffsetDateTime, locale: Locale, conference: Conference): Single<List<Item>> {
         return service.getSchedule(locale.language, conference.rawValue)
                 .map { it.schedule }
                 .flatMapIterable { it }
@@ -41,6 +36,9 @@ class ScheduleRepository {
                     Item(it.title, it.speaker.joinToString(), date, time)
                 }
                 .toList()
-                .toJson(gson)
     }
+
+    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference) = scheduleList(from, locale, conference).toJson(gson)
+
+    fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference) = scheduleList(from, locale, conference).toHtml()
 }

@@ -1,4 +1,4 @@
-package com.romainpiel.catsanddogs
+package com.romainpiel.catsanddogs.model
 
 data class Item(
         val title: String,
