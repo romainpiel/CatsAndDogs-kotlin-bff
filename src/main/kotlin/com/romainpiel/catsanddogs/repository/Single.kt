@@ -9,7 +9,7 @@ fun <T> Single<T>.toJson(gson: Gson) : Single<String> {
 }
 
 fun Single<List<Item>>.toHtml(): Single<String> {
-    return this.map  { it.map { it }.fold("", { acc, item ->
+    return this.map  { it.fold("", { acc, item ->
         acc + "<hr><p>" +
                 "<b>${item.title}</b><br>" +
                 "${item.subtitle}<br>" +

@@ -26,7 +26,7 @@ class ScheduleRepository {
     }
 
     private fun scheduleList(from: OffsetDateTime, locale: Locale, conference: Conference): Single<List<Item>> {
-        return service.getSchedule(locale.getLanguage(), conference.rawValue)
+        return service.getSchedule(locale.language, conference.rawValue)
                 .map { it.schedule }
                 .flatMapIterable { it }
                 .filter { !from.isAfter(it.datestamp) }
@@ -38,9 +38,7 @@ class ScheduleRepository {
                 .toList()
     }
 
-    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference): Single<String> =
-            this.scheduleList(from, locale, conference).toJson(gson)
+    fun schedule(from: OffsetDateTime, locale: Locale, conference: Conference) = scheduleList(from, locale, conference).toJson(gson)
 
-    fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference) =
-            this.scheduleList(from, locale, conference).toHtml()
+    fun scheduleHtml(from: OffsetDateTime, locale: Locale, conference: Conference) = scheduleList(from, locale, conference).toHtml()
 }
